@@ -93,9 +93,43 @@ npm install
 npm run build
 ```
 
+## Releasing a New Version
+
+### Option 1: Local Release Script (Recommended)
+
+```bash
+# From the lite-kit directory
+npm run release 1.1.0
+```
+
+This will:
+1. Validate you're on main with no uncommitted changes
+2. Install dependencies and build
+3. Update package.json version
+4. Commit, tag, and push
+
+### Option 2: GitHub Actions
+
+1. Go to [Actions](https://github.com/litedesigns/lite-kit/actions)
+2. Select "Release" workflow
+3. Click "Run workflow"
+4. Enter the version number (e.g., `1.1.0`)
+5. Select release type (patch/minor/major)
+6. Click "Run workflow"
+
+### After Releasing
+
+Update dependent projects:
+
+```json
+"@litedesigns/lite-kit": "github:litedesigns/lite-kit#v1.1.0"
+```
+
+Then run `npm install` in each project.
+
 ## Versioning
 
-Use git tags for version control:
-- `v1.0.0`, `v1.1.0`, `v2.0.0` (semver)
-- Update in package.json: `"github:litedesigns/lite-kit#v1.1.0"`
-- Run `npm install` to update
+Follow [Semantic Versioning](https://semver.org/):
+- **Patch** (1.0.x): Bug fixes, no API changes
+- **Minor** (1.x.0): New features, backwards compatible
+- **Major** (x.0.0): Breaking changes

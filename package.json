@@ -14,13 +14,15 @@
     "./styles": "./src/styles/accordion.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "src/styles"
   ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "eslint src --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "release": "./scripts/release.sh"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
