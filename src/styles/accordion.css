@@ -1,0 +1,42 @@
+/* Lite Kit Accordion - CSS Variables */
+
+/* Default theme (dark) */
+.lite-kit-accordion {
+  --accordion-bg: transparent;
+  --accordion-border: rgba(255, 255, 255, 0.1);
+  --accordion-text: rgb(255, 255, 255);
+  --accordion-text-muted: rgb(209, 213, 219);
+  --accordion-text-subtle: rgb(107, 114, 128);
+  --accordion-icon-bg: rgba(255, 255, 255, 0.1);
+  --accordion-icon-bg-active: rgba(255, 255, 255, 0.2);
+  --accordion-icon: rgba(255, 255, 255, 0.7);
+  --accordion-icon-active: rgb(255, 255, 255);
+}
+
+/* Light theme */
+.lite-kit-accordion[data-theme="light"] {
+  --accordion-bg: rgb(255, 255, 255);
+  --accordion-border: rgb(229, 231, 235);
+  --accordion-text: rgb(17, 24, 39);
+  --accordion-text-muted: rgb(75, 85, 99);
+  --accordion-text-subtle: rgb(156, 163, 175);
+  --accordion-icon-bg: rgb(243, 244, 246);
+  --accordion-icon-bg-active: rgb(17, 24, 39);
+  --accordion-icon: rgb(107, 114, 128);
+  --accordion-icon-active: rgb(255, 255, 255);
+}
+
+/* System theme - inherit from prefers-color-scheme */
+@media (prefers-color-scheme: light) {
+  .lite-kit-accordion:not([data-theme]) {
+    --accordion-bg: rgb(255, 255, 255);
+    --accordion-border: rgb(229, 231, 235);
+    --accordion-text: rgb(17, 24, 39);
+    --accordion-text-muted: rgb(75, 85, 99);
+    --accordion-text-subtle: rgb(156, 163, 175);
+    --accordion-icon-bg: rgb(243, 244, 246);
+    --accordion-icon-bg-active: rgb(17, 24, 39);
+    --accordion-icon: rgb(107, 114, 128);
+    --accordion-icon-active: rgb(255, 255, 255);
+  }
+}
