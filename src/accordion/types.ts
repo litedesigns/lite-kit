@@ -14,12 +14,16 @@ export interface AccordionItem {
 }
 
 export interface ScrollConfig {
-  /** Hysteresis threshold (0-1) - prevents jittery switching. Default: 0.3 */
-  hysteresis?: number;
-  /** Scroll item to viewport centre on manual tap. Default: true */
+  /** Viewport threshold (0-1) - how close to centre card must be to auto-expand. Default: 0.4 */
+  threshold?: number;
+  /** Cooldown in ms after manual interaction before scroll detection resumes. Default: 800 */
+  cooldown?: number;
+  /** Scroll clicked item to viewport centre. Default: true */
   scrollToCenter?: boolean;
   /** Only enable scroll detection on mobile devices (< 768px). Default: true */
   mobileOnly?: boolean;
+  /** Fixed header height in pixels to offset scroll calculations. Default: 0 */
+  headerOffset?: number;
 }
 
 export interface AccordionProps {
@@ -35,7 +39,7 @@ export interface AccordionProps {
   collapsible?: boolean;
 
   // Scroll detection (optional)
-  /** Enable Mac Gallery style scroll-based auto-expansion */
+  /** Enable scroll-based auto-expansion on mobile */
   scrollDetect?: boolean;
   /** Configuration for scroll detection behaviour */
   scrollConfig?: ScrollConfig;

@@ -1,6 +1,5 @@
 // Accordion
 export { Accordion } from './accordion/Accordion';
-export { useScrollDetection } from './accordion/useScrollDetection';
 export type {
   AccordionProps,
   AccordionItem,

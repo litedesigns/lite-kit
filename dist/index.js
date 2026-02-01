@@ -21,135 +21,16 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var index_exports = {};
 __export(index_exports, {
   Accordion: () => Accordion,
-  cn: () => cn,
-  useScrollDetection: () => useScrollDetection
+  cn: () => cn
 });
 module.exports = __toCommonJS(index_exports);
 
 // src/accordion/Accordion.tsx
-var import_react2 = require("react");
+var import_react = require("react");
 
 // src/utils/cn.ts
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");
-}
-
-// src/accordion/useScrollDetection.ts
-var import_react = require("react");
-function useScrollDetection({
-  itemRefs,
-  itemCount,
-  enabled,
-  config = {},
-  onActiveChange,
-  activeIndex
-}) {
-  const { hysteresis = 0.3, scrollToCenter = true, mobileOnly = true } = config;
-  const [isManuallySelected, setIsManuallySelected] = (0, import_react.useState)(false);
-  const [manuallyClosedIndex, setManuallyClosedIndex] = (0, import_react.useState)(null);
-  const [isMobile, setIsMobile] = (0, import_react.useState)(false);
-  const manualInteractionTimeoutRef = (0, import_react.useRef)(null);
-  (0, import_react.useEffect)(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-  const isScrollDetectionActive = enabled && (!mobileOnly || isMobile);
-  const handleManualInteraction = (0, import_react.useCallback)((index) => {
-    if (!isScrollDetectionActive) return;
-    setIsManuallySelected(true);
-    if (scrollToCenter && itemRefs.current) {
-      itemRefs.current[index]?.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-    }
-    if (manualInteractionTimeoutRef.current) {
-      clearTimeout(manualInteractionTimeoutRef.current);
-    }
-    manualInteractionTimeoutRef.current = setTimeout(() => {
-      setIsManuallySelected(false);
-    }, 800);
-  }, [scrollToCenter, itemRefs, isScrollDetectionActive]);
-  const markAsManuallyClosed = (0, import_react.useCallback)((index) => {
-    setManuallyClosedIndex(index);
-  }, []);
-  const clearManuallyClosed = (0, import_react.useCallback)(() => {
-    setManuallyClosedIndex(null);
-  }, []);
-  (0, import_react.useEffect)(() => {
-    if (!isScrollDetectionActive) return;
-    const handleScroll = () => {
-      if (isManuallySelected) return;
-      const refs = itemRefs.current;
-      if (!refs) return;
-      const viewportHeight = window.innerHeight;
-      const viewportCenter = viewportHeight / 2;
-      let closestIndex = null;
-      let closestDistance = Infinity;
-      for (let i = 0; i < itemCount; i++) {
-        const ref = refs[i];
-        if (!ref) continue;
-        const rect = ref.getBoundingClientRect();
-        const itemCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(itemCenter - viewportCenter);
-        if (rect.bottom > 0 && rect.top < viewportHeight) {
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestIndex = i;
-          }
-        }
-      }
-      if (closestIndex !== null && closestIndex !== activeIndex) {
-        if (activeIndex !== null && refs[activeIndex]) {
-          const currentRect = refs[activeIndex].getBoundingClientRect();
-          const currentDistance = Math.abs(
-            currentRect.top + currentRect.height / 2 - viewportCenter
-          );
-          const threshold = 1 - hysteresis;
-          if (closestDistance >= currentDistance * threshold) {
-            return;
-          }
-        }
-        if (manuallyClosedIndex !== null && closestIndex !== manuallyClosedIndex) {
-          setManuallyClosedIndex(null);
-        }
-        if (closestIndex !== manuallyClosedIndex) {
-          onActiveChange(closestIndex);
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [
-    isScrollDetectionActive,
-    isManuallySelected,
-    itemRefs,
-    itemCount,
-    hysteresis,
-    activeIndex,
-    manuallyClosedIndex,
-    onActiveChange
-  ]);
-  (0, import_react.useEffect)(() => {
-    return () => {
-      if (manualInteractionTimeoutRef.current) {
-        clearTimeout(manualInteractionTimeoutRef.current);
-      }
-    };
-  }, []);
-  return {
-    handleManualInteraction,
-    isManuallySelected,
-    manuallyClosedIndex,
-    clearManuallyClosed
-  };
 }
 
 // src/accordion/Accordion.tsx
@@ -159,12 +40,12 @@ function ChevronIcon({ className, isOpen }) {
     "svg",
     {
       className: cn(
-        "lite-kit-accordion-chevron w-4 h-4 flex-shrink-0 transition-transform duration-300",
+        "lite-kit-accordion-chevron w-5 h-5 flex-shrink-0 transition-transform duration-300",
         isOpen && "lite-kit-accordion-chevron--open rotate-180",
         className
       ),
-      width: "16",
-      height: "16",
+      width: "20",
+      height: "20",
       viewBox: "0 0 24 24",
       fill: "none",
       stroke: "currentColor",
@@ -181,49 +62,62 @@ function Accordion({
   defaultOpen,
   collapsible = true,
   scrollDetect = false,
-  scrollConfig,
+  scrollConfig = {},
   className,
   itemClassName,
   onValueChange
 }) {
+  const {
+    threshold = 0.4,
+    cooldown = 800,
+    scrollToCenter = true,
+    mobileOnly = true,
+    headerOffset = 0
+  } = scrollConfig;
   const getInitialOpenIds = () => {
     if (!defaultOpen) return [];
     if (Array.isArray(defaultOpen)) return defaultOpen;
     return [defaultOpen];
   };
-  const [openIds, setOpenIds] = (0, import_react2.useState)(getInitialOpenIds);
-  const itemRefs = (0, import_react2.useRef)([]);
-  const [manuallyClosedId, setManuallyClosedId] = (0, import_react2.useState)(null);
-  const activeIndex = openIds.length > 0 ? items.findIndex((item) => item.id === openIds[0]) : null;
-  const {
-    handleManualInteraction,
-    isManuallySelected,
-    manuallyClosedIndex,
-    clearManuallyClosed
-  } = useScrollDetection({
-    itemRefs,
-    itemCount: items.length,
-    enabled: scrollDetect,
-    config: scrollConfig,
-    activeIndex,
-    onActiveChange: (index) => {
-      if (index !== null) {
-        const newId = items[index]?.id;
-        if (newId && newId !== manuallyClosedId) {
-          setOpenIds([newId]);
-          onValueChange?.([newId]);
+  const [openIds, setOpenIds] = (0, import_react.useState)(getInitialOpenIds);
+  const [isMobile, setIsMobile] = (0, import_react.useState)(false);
+  const [manuallySelected, setManuallySelected] = (0, import_react.useState)(false);
+  const [manuallyClosedId, setManuallyClosedId] = (0, import_react.useState)(null);
+  const itemRefs = (0, import_react.useRef)([]);
+  const scrollTimeoutRef = (0, import_react.useRef)(null);
+  const manualTimeoutRef = (0, import_react.useRef)(null);
+  (0, import_react.useEffect)(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+  const isScrollDetectionActive = scrollDetect && (!mobileOnly || isMobile);
+  const handleToggle = (0, import_react.useCallback)((item, index) => {
+    const isOpen = openIds.includes(item.id);
+    if (isScrollDetectionActive) {
+      setManuallySelected(true);
+      if (scrollToCenter && !isOpen) {
+        const element = itemRefs.current[index];
+        if (element) {
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
         }
       }
-    }
-  });
-  const handleToggle = (0, import_react2.useCallback)((item, index) => {
-    const isOpen = openIds.includes(item.id);
-    if (scrollDetect) {
-      handleManualInteraction(index);
+      if (manualTimeoutRef.current) {
+        clearTimeout(manualTimeoutRef.current);
+      }
+      manualTimeoutRef.current = setTimeout(() => {
+        setManuallySelected(false);
+      }, cooldown);
     }
     if (isOpen) {
       if (collapsible || openIds.length > 1) {
-        if (scrollDetect) {
+        if (isScrollDetectionActive) {
           setManuallyClosedId(item.id);
         }
         const newIds = openIds.filter((id) => id !== item.id);
@@ -232,7 +126,6 @@ function Accordion({
       }
     } else {
       setManuallyClosedId(null);
-      clearManuallyClosed();
       if (mode === "single") {
         setOpenIds([item.id]);
         onValueChange?.([item.id]);
@@ -242,16 +135,59 @@ function Accordion({
         onValueChange?.(newIds);
       }
     }
-  }, [openIds, mode, collapsible, scrollDetect, handleManualInteraction, clearManuallyClosed, onValueChange]);
-  (0, import_react2.useEffect)(() => {
-    if (manuallyClosedIndex !== null) {
-      const closedId = items[manuallyClosedIndex]?.id;
-      if (closedId !== manuallyClosedId) {
-        setManuallyClosedId(null);
+  }, [openIds, mode, collapsible, isScrollDetectionActive, scrollToCenter, cooldown, onValueChange]);
+  (0, import_react.useEffect)(() => {
+    if (!isScrollDetectionActive) return;
+    const handleScroll = () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
       }
-    }
-  }, [manuallyClosedIndex, items, manuallyClosedId]);
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: cn("lite-kit-accordion space-y-2", className), children: items.map((item, index) => {
+      scrollTimeoutRef.current = setTimeout(() => {
+        setManuallySelected(false);
+      }, 150);
+      if (manuallySelected) return;
+      const viewportHeight = window.innerHeight;
+      const effectiveViewportHeight = viewportHeight - headerOffset;
+      const viewportCenter = headerOffset + effectiveViewportHeight / 2;
+      let closestIndex = -1;
+      let closestDistance = Infinity;
+      itemRefs.current.forEach((ref, index) => {
+        if (!ref) return;
+        const rect = ref.getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(cardCenter - viewportCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+      if (closestIndex >= 0 && closestDistance < effectiveViewportHeight * threshold) {
+        const closestId = items[closestIndex]?.id;
+        if (manuallyClosedId !== null && closestId !== manuallyClosedId) {
+          setManuallyClosedId(null);
+        }
+        if (closestId !== manuallyClosedId && closestId !== openIds[0]) {
+          setOpenIds([closestId]);
+          onValueChange?.([closestId]);
+        }
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [isScrollDetectionActive, manuallySelected, manuallyClosedId, items, openIds, threshold, headerOffset, onValueChange]);
+  (0, import_react.useEffect)(() => {
+    return () => {
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      if (manualTimeoutRef.current) clearTimeout(manualTimeoutRef.current);
+    };
+  }, []);
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: cn("lite-kit-accordion space-y-3", className), children: items.map((item, index) => {
     const isOpen = openIds.includes(item.id);
     const Icon = item.icon;
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
@@ -292,30 +228,19 @@ function Accordion({
                   }
                 ),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "lite-kit-accordion-text flex-1 min-w-0", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "lite-kit-accordion-title text-sm font-medium", children: item.title }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "lite-kit-accordion-title font-semibold text-sm", children: item.title }),
                   item.subtitle && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                     "p",
                     {
                       className: cn(
-                        "lite-kit-accordion-subtitle text-sm mt-0.5 transition-colors duration-300",
+                        "lite-kit-accordion-subtitle text-xs mt-0.5 transition-colors duration-300",
                         isOpen && "lite-kit-accordion-subtitle--active"
                       ),
                       children: item.subtitle
                     }
                   )
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                  "div",
-                  {
-                    className: cn(
-                      "lite-kit-accordion-toggle",
-                      "w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center",
-                      "transition-all duration-300",
-                      isOpen && "lite-kit-accordion-toggle--open"
-                    ),
-                    children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronIcon, { isOpen })
-                  }
-                )
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronIcon, { isOpen, className: "lite-kit-accordion-chevron-icon" })
               ]
             }
           ),
@@ -334,7 +259,7 @@ function Accordion({
                 "div",
                 {
                   className: cn(
-                    "lite-kit-accordion-content-inner leading-relaxed",
+                    "lite-kit-accordion-content-inner text-sm leading-relaxed",
                     Icon ? "px-4 pb-4 pl-20" : "px-4 pb-4"
                   ),
                   children: typeof item.content === "string" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: item.content }) : item.content
@@ -351,7 +276,6 @@ function Accordion({
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   Accordion,
-  cn,
-  useScrollDetection
+  cn
 });
 //# sourceMappingURL=index.js.map

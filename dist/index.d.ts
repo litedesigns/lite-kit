@@ -1,5 +1,5 @@
 import * as react_jsx_runtime from 'react/jsx-runtime';
-import { ReactNode, ComponentType, RefObject } from 'react';
+import { ReactNode, ComponentType } from 'react';
 
 interface AccordionItem {
     /** Unique identifier for the item */
@@ -16,12 +16,16 @@ interface AccordionItem {
     subtitle?: string;
 }
 interface ScrollConfig {
-    /** Hysteresis threshold (0-1) - prevents jittery switching. Default: 0.3 */
-    hysteresis?: number;
-    /** Scroll item to viewport centre on manual tap. Default: true */
+    /** Viewport threshold (0-1) - how close to centre card must be to auto-expand. Default: 0.4 */
+    threshold?: number;
+    /** Cooldown in ms after manual interaction before scroll detection resumes. Default: 800 */
+    cooldown?: number;
+    /** Scroll clicked item to viewport centre. Default: true */
     scrollToCenter?: boolean;
     /** Only enable scroll detection on mobile devices (< 768px). Default: true */
     mobileOnly?: boolean;
+    /** Fixed header height in pixels to offset scroll calculations. Default: 0 */
+    headerOffset?: number;
 }
 interface AccordionProps {
     /** Array of accordion items */
@@ -32,7 +36,7 @@ interface AccordionProps {
     defaultOpen?: string | string[];
     /** Allow closing all items when in single mode. Default: true */
     collapsible?: boolean;
-    /** Enable Mac Gallery style scroll-based auto-expansion */
+    /** Enable scroll-based auto-expansion on mobile */
     scrollDetect?: boolean;
     /** Configuration for scroll detection behaviour */
     scrollConfig?: ScrollConfig;
@@ -46,36 +50,10 @@ interface AccordionProps {
 
 declare function Accordion({ items, mode, defaultOpen, collapsible, scrollDetect, scrollConfig, className, itemClassName, onValueChange, }: AccordionProps): react_jsx_runtime.JSX.Element;
 
-interface UseScrollDetectionProps {
-    /** Array of refs to track */
-    itemRefs: RefObject<(HTMLElement | null)[]>;
-    /** Number of items */
-    itemCount: number;
-    /** Whether scroll detection is enabled */
-    enabled: boolean;
-    /** Configuration options */
-    config?: ScrollConfig;
-    /** Callback when active item changes */
-    onActiveChange: (index: number | null) => void;
-    /** Currently active index (for hysteresis comparison) */
-    activeIndex: number | null;
-}
-interface UseScrollDetectionReturn {
-    /** Call this when user manually interacts */
-    handleManualInteraction: (index: number) => void;
-    /** Whether manual interaction is active (temporarily disables scroll detection) */
-    isManuallySelected: boolean;
-    /** Index of manually closed item (won't auto-reopen) */
-    manuallyClosedIndex: number | null;
-    /** Clear manually closed state */
-    clearManuallyClosed: () => void;
-}
-declare function useScrollDetection({ itemRefs, itemCount, enabled, config, onActiveChange, activeIndex, }: UseScrollDetectionProps): UseScrollDetectionReturn;
-
 /**
  * Utility function for merging class names
  * Filters out falsy values and joins remaining classes
  */
 declare function cn(...classes: (string | undefined | null | false)[]): string;
 
-export { Accordion, type AccordionItem, type AccordionProps, type ScrollConfig, cn, useScrollDetection };
+export { Accordion, type AccordionItem, type AccordionProps, type ScrollConfig, cn };
