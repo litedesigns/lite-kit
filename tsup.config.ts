@@ -9,4 +9,5 @@ export default defineConfig({
   clean: true,
   external: ['react', 'react-dom'],
   injectStyle: false,
+  onSuccess: 'yalc push --changed',
 });

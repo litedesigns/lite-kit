@@ -18,6 +18,8 @@ export interface ScrollConfig {
   hysteresis?: number;
   /** Scroll item to viewport centre on manual tap. Default: true */
   scrollToCenter?: boolean;
+  /** Only enable scroll detection on mobile devices (< 768px). Default: true */
+  mobileOnly?: boolean;
 }
 
 export interface AccordionProps {
@@ -39,11 +41,7 @@ export interface AccordionProps {
   scrollConfig?: ScrollConfig;
 
   // Styling
-  /** Visual variant: 'default', 'card', or 'minimal'. Default: 'default' */
-  variant?: 'default' | 'card' | 'minimal';
-  /** Theme preset: 'light', 'dark', or 'system'. Default: 'system' */
-  theme?: 'light' | 'dark' | 'system';
-  /** Additional CSS class names */
+  /** Additional CSS class names for the container */
   className?: string;
   /** Additional CSS class names for individual items */
   itemClassName?: string;

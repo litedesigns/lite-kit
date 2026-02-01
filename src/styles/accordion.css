@@ -1,42 +1,61 @@
-/* Lite Kit Accordion - CSS Variables */
-
-/* Default theme (dark) */
-.lite-kit-accordion {
-  --accordion-bg: transparent;
-  --accordion-border: rgba(255, 255, 255, 0.1);
-  --accordion-text: rgb(255, 255, 255);
-  --accordion-text-muted: rgb(209, 213, 219);
-  --accordion-text-subtle: rgb(107, 114, 128);
-  --accordion-icon-bg: rgba(255, 255, 255, 0.1);
-  --accordion-icon-bg-active: rgba(255, 255, 255, 0.2);
-  --accordion-icon: rgba(255, 255, 255, 0.7);
-  --accordion-icon-active: rgb(255, 255, 255);
-}
-
-/* Light theme */
-.lite-kit-accordion[data-theme="light"] {
-  --accordion-bg: rgb(255, 255, 255);
-  --accordion-border: rgb(229, 231, 235);
-  --accordion-text: rgb(17, 24, 39);
-  --accordion-text-muted: rgb(75, 85, 99);
-  --accordion-text-subtle: rgb(156, 163, 175);
-  --accordion-icon-bg: rgb(243, 244, 246);
-  --accordion-icon-bg-active: rgb(17, 24, 39);
-  --accordion-icon: rgb(107, 114, 128);
-  --accordion-icon-active: rgb(255, 255, 255);
-}
-
-/* System theme - inherit from prefers-color-scheme */
-@media (prefers-color-scheme: light) {
-  .lite-kit-accordion:not([data-theme]) {
-    --accordion-bg: rgb(255, 255, 255);
-    --accordion-border: rgb(229, 231, 235);
-    --accordion-text: rgb(17, 24, 39);
-    --accordion-text-muted: rgb(75, 85, 99);
-    --accordion-text-subtle: rgb(156, 163, 175);
-    --accordion-icon-bg: rgb(243, 244, 246);
-    --accordion-icon-bg-active: rgb(17, 24, 39);
-    --accordion-icon: rgb(107, 114, 128);
-    --accordion-icon-active: rgb(255, 255, 255);
-  }
-}
+/**
+ * Lite Kit Accordion - Styling Guide
+ *
+ * The Accordion component uses Tailwind classes for structural/functional styling
+ * (layout, collapse animation, transitions) and semantic class names for visual
+ * styling that projects can target.
+ *
+ * Semantic class names available for visual customisation:
+ *
+ * Container:
+ * - .lite-kit-accordion                    Main container
+ *
+ * Items:
+ * - .lite-kit-accordion-item               Individual item wrapper
+ * - .lite-kit-accordion-item--open         Item when expanded
+ *
+ * Header:
+ * - .lite-kit-accordion-header             Clickable header button
+ *
+ * Icon (when provided):
+ * - .lite-kit-accordion-icon               Icon container
+ * - .lite-kit-accordion-icon--active       Icon container when expanded
+ * - .lite-kit-accordion-icon-svg           The icon SVG element
+ *
+ * Text:
+ * - .lite-kit-accordion-text               Title/subtitle container
+ * - .lite-kit-accordion-title              Title text
+ * - .lite-kit-accordion-subtitle           Subtitle text (if provided)
+ * - .lite-kit-accordion-subtitle--active   Subtitle when expanded
+ *
+ * Chevron:
+ * - .lite-kit-accordion-chevron            Chevron icon
+ * - .lite-kit-accordion-chevron--open      Chevron when expanded (rotated)
+ *
+ * Content:
+ * - .lite-kit-accordion-content            Content wrapper
+ * - .lite-kit-accordion-content--open      Content when visible
+ * - .lite-kit-accordion-content--closed    Content when hidden
+ * - .lite-kit-accordion-content-inner      Inner content with padding
+ *
+ * Example usage in your project's CSS:
+ *
+ * .my-accordion .lite-kit-accordion-item {
+ *   background-color: white;
+ *   border: 1px solid #e5e7eb;
+ *   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+ * }
+ *
+ * .my-accordion .lite-kit-accordion-title {
+ *   font-weight: 600;
+ *   color: #111827;
+ * }
+ *
+ * .my-accordion .lite-kit-accordion-chevron {
+ *   color: #6b7280;
+ * }
+ *
+ * .my-accordion .lite-kit-accordion-content-inner {
+ *   color: #4b5563;
+ * }
+ */

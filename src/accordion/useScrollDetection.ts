@@ -35,14 +35,31 @@ export function useScrollDetection({
   onActiveChange,
   activeIndex,
 }: UseScrollDetectionProps): UseScrollDetectionReturn {
-  const { hysteresis = 0.3, scrollToCenter = true } = config;
+  const { hysteresis = 0.3, scrollToCenter = true, mobileOnly = true } = config;
 
   const [isManuallySelected, setIsManuallySelected] = useState(false);
   const [manuallyClosedIndex, setManuallyClosedIndex] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const manualInteractionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Determine if scroll detection should be active
+  const isScrollDetectionActive = enabled && (!mobileOnly || isMobile);
 
   // Handle manual tap/click interaction
   const handleManualInteraction = useCallback((index: number) => {
+    // Only apply scroll detection behaviour when active
+    if (!isScrollDetectionActive) return;
+
     setIsManuallySelected(true);
 
     // Scroll to centre if enabled
@@ -62,7 +79,7 @@ export function useScrollDetection({
     manualInteractionTimeoutRef.current = setTimeout(() => {
       setIsManuallySelected(false);
     }, 800);
-  }, [scrollToCenter, itemRefs]);
+  }, [scrollToCenter, itemRefs, isScrollDetectionActive]);
 
   // Mark an item as manually closed
   const markAsManuallyClosed = useCallback((index: number) => {
@@ -76,7 +93,7 @@ export function useScrollDetection({
 
   // Scroll detection effect
   useEffect(() => {
-    if (!enabled) return;
+    if (!isScrollDetectionActive) return;
 
     const handleScroll = () => {
       // Don't override during manual interaction
@@ -143,7 +160,7 @@ export function useScrollDetection({
       window.removeEventListener('scroll', handleScroll);
     };
   }, [
-    enabled,
+    isScrollDetectionActive,
     isManuallySelected,
     itemRefs,
     itemCount,

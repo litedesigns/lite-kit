@@ -44,11 +44,22 @@ function useScrollDetection({
   onActiveChange,
   activeIndex
 }) {
-  const { hysteresis = 0.3, scrollToCenter = true } = config;
+  const { hysteresis = 0.3, scrollToCenter = true, mobileOnly = true } = config;
   const [isManuallySelected, setIsManuallySelected] = (0, import_react.useState)(false);
   const [manuallyClosedIndex, setManuallyClosedIndex] = (0, import_react.useState)(null);
+  const [isMobile, setIsMobile] = (0, import_react.useState)(false);
   const manualInteractionTimeoutRef = (0, import_react.useRef)(null);
+  (0, import_react.useEffect)(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+  const isScrollDetectionActive = enabled && (!mobileOnly || isMobile);
   const handleManualInteraction = (0, import_react.useCallback)((index) => {
+    if (!isScrollDetectionActive) return;
     setIsManuallySelected(true);
     if (scrollToCenter && itemRefs.current) {
       itemRefs.current[index]?.scrollIntoView({
@@ -62,7 +73,7 @@ function useScrollDetection({
     manualInteractionTimeoutRef.current = setTimeout(() => {
       setIsManuallySelected(false);
     }, 800);
-  }, [scrollToCenter, itemRefs]);
+  }, [scrollToCenter, itemRefs, isScrollDetectionActive]);
   const markAsManuallyClosed = (0, import_react.useCallback)((index) => {
     setManuallyClosedIndex(index);
   }, []);
@@ -70,7 +81,7 @@ function useScrollDetection({
     setManuallyClosedIndex(null);
   }, []);
   (0, import_react.useEffect)(() => {
-    if (!enabled) return;
+    if (!isScrollDetectionActive) return;
     const handleScroll = () => {
       if (isManuallySelected) return;
       const refs = itemRefs.current;
@@ -117,7 +128,7 @@ function useScrollDetection({
       window.removeEventListener("scroll", handleScroll);
     };
   }, [
-    enabled,
+    isScrollDetectionActive,
     isManuallySelected,
     itemRefs,
     itemCount,
@@ -148,12 +159,12 @@ function ChevronIcon({ className, isOpen }) {
     "svg",
     {
       className: cn(
-        "transition-transform duration-300",
-        isOpen && "rotate-180",
+        "lite-kit-accordion-chevron w-4 h-4 flex-shrink-0 transition-transform duration-300",
+        isOpen && "lite-kit-accordion-chevron--open rotate-180",
         className
       ),
-      width: "20",
-      height: "20",
+      width: "16",
+      height: "16",
       viewBox: "0 0 24 24",
       fill: "none",
       stroke: "currentColor",
@@ -171,8 +182,6 @@ function Accordion({
   collapsible = true,
   scrollDetect = false,
   scrollConfig,
-  variant = "default",
-  theme = "system",
   className,
   itemClassName,
   onValueChange
@@ -242,147 +251,102 @@ function Accordion({
       }
     }
   }, [manuallyClosedIndex, items, manuallyClosedId]);
-  const themeAttr = theme !== "system" ? { "data-theme": theme } : {};
-  const getContainerStyles = () => {
-    switch (variant) {
-      case "card":
-        return "space-y-4";
-      case "minimal":
-        return "divide-y divide-[var(--accordion-border)]";
-      default:
-        return "space-y-2";
-    }
-  };
-  const getItemStyles = (isOpen) => {
-    const base = "transition-all duration-300 ease-out";
-    switch (variant) {
-      case "card":
-        return cn(
-          base,
-          "rounded-lg border border-[var(--accordion-border)] bg-[var(--accordion-bg)]",
-          "shadow-sm backdrop-blur-sm",
-          isOpen && "ring-1 ring-[var(--accordion-border)]"
-        );
-      case "minimal":
-        return cn(base, "bg-transparent");
-      default:
-        return cn(
-          base,
-          "rounded-lg border border-[var(--accordion-border)] bg-[var(--accordion-bg)]",
-          "overflow-hidden"
-        );
-    }
-  };
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-    "div",
-    {
-      className: cn("lite-kit-accordion", getContainerStyles(), className),
-      ...themeAttr,
-      children: items.map((item, index) => {
-        const isOpen = openIds.includes(item.id);
-        const Icon = item.icon;
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-          "div",
-          {
-            ref: (el) => {
-              itemRefs.current[index] = el;
-            },
-            className: cn(getItemStyles(isOpen), itemClassName),
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-                "button",
-                {
-                  type: "button",
-                  onClick: () => handleToggle(item, index),
-                  className: cn(
-                    "w-full flex items-center gap-4 p-4 text-left cursor-pointer",
-                    "transition-colors duration-200",
-                    "active:scale-[0.99]"
-                  ),
-                  "aria-expanded": isOpen,
-                  "aria-controls": `accordion-content-${item.id}`,
-                  children: [
-                    Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                      "div",
-                      {
-                        className: cn(
-                          "w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center",
-                          "transition-all duration-500",
-                          isOpen ? "bg-[var(--accordion-icon-bg-active)]" : "bg-[var(--accordion-icon-bg)]"
-                        ),
-                        children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                          Icon,
-                          {
-                            className: cn(
-                              "w-6 h-6 transition-colors duration-300",
-                              isOpen ? "text-[var(--accordion-icon-active)]" : "text-[var(--accordion-icon)]"
-                            )
-                          }
-                        )
-                      }
-                    ),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                        "h3",
-                        {
-                          className: cn(
-                            "font-semibold text-[var(--accordion-text)]",
-                            variant === "minimal" ? "text-base" : "text-base"
-                          ),
-                          children: item.title
-                        }
-                      ),
-                      item.subtitle && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                        "p",
-                        {
-                          className: cn(
-                            "text-sm transition-colors duration-300 mt-0.5",
-                            isOpen ? "text-[var(--accordion-text-muted)]" : "text-[var(--accordion-text-subtle)]"
-                          ),
-                          children: item.subtitle
-                        }
-                      )
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                      ChevronIcon,
-                      {
-                        className: "flex-shrink-0 text-[var(--accordion-text-muted)]",
-                        isOpen
-                      }
-                    )
-                  ]
-                }
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: cn("lite-kit-accordion space-y-2", className), children: items.map((item, index) => {
+    const isOpen = openIds.includes(item.id);
+    const Icon = item.icon;
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+      "div",
+      {
+        ref: (el) => {
+          itemRefs.current[index] = el;
+        },
+        className: cn(
+          "lite-kit-accordion-item overflow-hidden transition-all duration-300 ease-out",
+          isOpen && "lite-kit-accordion-item--open",
+          itemClassName
+        ),
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+            "button",
+            {
+              type: "button",
+              onClick: () => handleToggle(item, index),
+              className: cn(
+                "lite-kit-accordion-header",
+                "w-full flex items-center gap-4 p-4 text-left cursor-pointer",
+                "transition-colors duration-200 active:scale-[0.99]"
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                "div",
-                {
-                  id: `accordion-content-${item.id}`,
-                  className: cn(
-                    "overflow-hidden transition-all duration-500 ease-out",
-                    isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                  ),
-                  role: "region",
-                  "aria-labelledby": `accordion-header-${item.id}`,
-                  children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                    "div",
+              "aria-expanded": isOpen,
+              "aria-controls": `accordion-content-${item.id}`,
+              children: [
+                Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "div",
+                  {
+                    className: cn(
+                      "lite-kit-accordion-icon",
+                      "w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center",
+                      "transition-all duration-300",
+                      isOpen && "lite-kit-accordion-icon--active"
+                    ),
+                    children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { className: "lite-kit-accordion-icon-svg w-6 h-6 transition-colors duration-300" })
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "lite-kit-accordion-text flex-1 min-w-0", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "lite-kit-accordion-title text-sm font-medium", children: item.title }),
+                  item.subtitle && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                    "p",
                     {
                       className: cn(
-                        "text-[var(--accordion-text-muted)] leading-relaxed",
-                        Icon ? "px-4 pb-4 pl-20" : "px-4 pb-4",
-                        variant === "minimal" && "px-0 pb-4"
+                        "lite-kit-accordion-subtitle text-sm mt-0.5 transition-colors duration-300",
+                        isOpen && "lite-kit-accordion-subtitle--active"
                       ),
-                      children: typeof item.content === "string" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: item.content }) : item.content
+                      children: item.subtitle
                     }
                   )
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "div",
+                  {
+                    className: cn(
+                      "lite-kit-accordion-toggle",
+                      "w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center",
+                      "transition-all duration-300",
+                      isOpen && "lite-kit-accordion-toggle--open"
+                    ),
+                    children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronIcon, { isOpen })
+                  }
+                )
+              ]
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "div",
+            {
+              id: `accordion-content-${item.id}`,
+              className: cn(
+                "lite-kit-accordion-content",
+                "overflow-hidden transition-all duration-300 ease-out",
+                isOpen ? "lite-kit-accordion-content--open max-h-96 opacity-100" : "lite-kit-accordion-content--closed max-h-0 opacity-0"
+              ),
+              role: "region",
+              "aria-labelledby": `accordion-header-${item.id}`,
+              children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "div",
+                {
+                  className: cn(
+                    "lite-kit-accordion-content-inner leading-relaxed",
+                    Icon ? "px-4 pb-4 pl-20" : "px-4 pb-4"
+                  ),
+                  children: typeof item.content === "string" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: item.content }) : item.content
                 }
               )
-            ]
-          },
-          item.id
-        );
-      })
-    }
-  );
+            }
+          )
+        ]
+      },
+      item.id
+    );
+  }) });
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

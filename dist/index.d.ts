@@ -20,6 +20,8 @@ interface ScrollConfig {
     hysteresis?: number;
     /** Scroll item to viewport centre on manual tap. Default: true */
     scrollToCenter?: boolean;
+    /** Only enable scroll detection on mobile devices (< 768px). Default: true */
+    mobileOnly?: boolean;
 }
 interface AccordionProps {
     /** Array of accordion items */
@@ -34,11 +36,7 @@ interface AccordionProps {
     scrollDetect?: boolean;
     /** Configuration for scroll detection behaviour */
     scrollConfig?: ScrollConfig;
-    /** Visual variant: 'default', 'card', or 'minimal'. Default: 'default' */
-    variant?: 'default' | 'card' | 'minimal';
-    /** Theme preset: 'light', 'dark', or 'system'. Default: 'system' */
-    theme?: 'light' | 'dark' | 'system';
-    /** Additional CSS class names */
+    /** Additional CSS class names for the container */
     className?: string;
     /** Additional CSS class names for individual items */
     itemClassName?: string;
@@ -46,7 +44,7 @@ interface AccordionProps {
     onValueChange?: (openIds: string[]) => void;
 }
 
-declare function Accordion({ items, mode, defaultOpen, collapsible, scrollDetect, scrollConfig, variant, theme, className, itemClassName, onValueChange, }: AccordionProps): react_jsx_runtime.JSX.Element;
+declare function Accordion({ items, mode, defaultOpen, collapsible, scrollDetect, scrollConfig, className, itemClassName, onValueChange, }: AccordionProps): react_jsx_runtime.JSX.Element;
 
 interface UseScrollDetectionProps {
     /** Array of refs to track */
