@@ -1,3 +1,9 @@
 node_modules/
 .DS_Store
 *.log
+
+# Storybook
+storybook-static
+
+# Vitest
+coverage
