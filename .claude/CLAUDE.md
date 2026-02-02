@@ -6,11 +6,15 @@ Shared component library for LiteDesigns projects (Infinity, Zest).
 - TypeScript, React 18
 - tsup for building
 - yalc for local development
+- Storybook 8 for component showcase
+- Vitest for unit testing
 
 ## Commands
 - `npm run dev` - Watch mode (auto-pushes to yalc)
 - `npm run build` - Production build
 - `npm run release` - Release new version (runs `scripts/release.sh`)
+- `npm run storybook` - Launch Storybook dev server
+- `npm test` - Run tests in watch mode
 
 ## Consumer Projects
 - Infinity: `~/Repos/infinity`
@@ -106,3 +110,21 @@ Consumer projects have a pre-push hook that:
 2. Blocks push if package.json contains yalc reference
 
 This prevents accidentally deploying with local-only dependencies.
+
+## Development Tools
+
+### Storybook
+- `npm run storybook` - Component playground at localhost:6006
+- `npm run build-storybook` - Build static docs site
+- Stories: `src/**/*.stories.tsx`
+- Live demo: https://litedesigns.github.io/lite-kit
+
+### Testing
+- `npm test` - Vitest watch mode
+- `npm run test:ui` - Vitest UI interface
+- `npm run test:coverage` - Coverage reports
+- Tests: `src/**/*.test.tsx`
+
+### GitHub Pages
+Storybook automatically deploys to GitHub Pages on version tags (v*).
+Manual deployment: Actions > Deploy Storybook > Run workflow

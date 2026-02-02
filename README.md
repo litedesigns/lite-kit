@@ -88,6 +88,25 @@ The component uses CSS variables for theming. Override in your CSS:
 
 ## Development
 
+### Component Development
+
+```bash
+npm run storybook  # Launch Storybook dev server at http://localhost:6006
+```
+
+View the live component library at: https://litedesigns.github.io/lite-kit
+
+### Testing
+
+```bash
+npm test              # Run tests in watch mode
+npm run test:ui       # Open Vitest UI
+npm run test:run      # Run tests once (CI mode)
+npm run test:coverage # Generate coverage report
+```
+
+### Building
+
 ```bash
 npm install
 npm run build
