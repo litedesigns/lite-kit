@@ -44,6 +44,7 @@ export function Accordion({
     scrollToCenter = true,
     mobileOnly = true,
     headerOffset = 0,
+    hysteresis = 50,
   } = scrollConfig;
 
   // Initialise open state
@@ -149,24 +150,45 @@ export function Accordion({
       const effectiveViewportHeight = viewportHeight - headerOffset;
       const viewportCenter = headerOffset + effectiveViewportHeight / 2;
 
-      let closestIndex = -1;
-      let closestDistance = Infinity;
+      // Find current open item's index
+      const currentOpenIndex = openIds.length > 0
+        ? items.findIndex(item => item.id === openIds[0])
+        : -1;
+
+      // Calculate current open item's center distance (for "stickiness")
+      let currentCenterDistance = Infinity;
+      if (currentOpenIndex >= 0) {
+        const currentRef = itemRefs.current[currentOpenIndex];
+        if (currentRef) {
+          const rect = currentRef.getBoundingClientRect();
+          const cardCenter = rect.top + rect.height / 2;
+          currentCenterDistance = Math.abs(cardCenter - viewportCenter);
+        }
+      }
+
+      // Find candidate using item's HEAD (top) instead of center
+      let candidateIndex = -1;
+      let candidateHeadDistance = Infinity;
 
       itemRefs.current.forEach((ref, index) => {
         if (!ref) return;
         const rect = ref.getBoundingClientRect();
-        const cardCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(cardCenter - viewportCenter);
+        const cardHead = rect.top; // Use top (head) instead of center
+        const distance = Math.abs(cardHead - viewportCenter);
 
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
+        if (distance < candidateHeadDistance) {
+          candidateHeadDistance = distance;
+          candidateIndex = index;
         }
       });
 
-      // Only expand if the card is reasonably close to centre
-      if (closestIndex >= 0 && closestDistance < effectiveViewportHeight * threshold) {
-        const closestId = items[closestIndex]?.id;
+      // Only switch if candidate head is significantly closer than current center (hysteresis)
+      const shouldSwitch = candidateIndex >= 0 &&
+        candidateHeadDistance < effectiveViewportHeight * threshold &&
+        (currentOpenIndex === -1 || candidateHeadDistance + hysteresis < currentCenterDistance);
+
+      if (shouldSwitch) {
+        const closestId = items[candidateIndex]?.id;
 
         // If user manually closed a different card, clear that state
         if (manuallyClosedId !== null && closestId !== manuallyClosedId) {
@@ -190,7 +212,7 @@ export function Accordion({
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, [isScrollDetectionActive, manuallySelected, manuallyClosedId, items, openIds, threshold, headerOffset, onValueChange]);
+  }, [isScrollDetectionActive, manuallySelected, manuallyClosedId, items, openIds, threshold, headerOffset, hysteresis, onValueChange]);
 
   // Cleanup timeouts on unmount
   useEffect(() => {

@@ -45,7 +45,8 @@ function Accordion({
     cooldown = 800,
     scrollToCenter = true,
     mobileOnly = true,
-    headerOffset = 0
+    headerOffset = 0,
+    hysteresis = 50
   } = scrollConfig;
   const getInitialOpenIds = () => {
     if (!defaultOpen) return [];
@@ -122,20 +123,31 @@ function Accordion({
       const viewportHeight = window.innerHeight;
       const effectiveViewportHeight = viewportHeight - headerOffset;
       const viewportCenter = headerOffset + effectiveViewportHeight / 2;
-      let closestIndex = -1;
-      let closestDistance = Infinity;
+      const currentOpenIndex = openIds.length > 0 ? items.findIndex((item) => item.id === openIds[0]) : -1;
+      let currentCenterDistance = Infinity;
+      if (currentOpenIndex >= 0) {
+        const currentRef = itemRefs.current[currentOpenIndex];
+        if (currentRef) {
+          const rect = currentRef.getBoundingClientRect();
+          const cardCenter = rect.top + rect.height / 2;
+          currentCenterDistance = Math.abs(cardCenter - viewportCenter);
+        }
+      }
+      let candidateIndex = -1;
+      let candidateHeadDistance = Infinity;
       itemRefs.current.forEach((ref, index) => {
         if (!ref) return;
         const rect = ref.getBoundingClientRect();
-        const cardCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(cardCenter - viewportCenter);
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
+        const cardHead = rect.top;
+        const distance = Math.abs(cardHead - viewportCenter);
+        if (distance < candidateHeadDistance) {
+          candidateHeadDistance = distance;
+          candidateIndex = index;
         }
       });
-      if (closestIndex >= 0 && closestDistance < effectiveViewportHeight * threshold) {
-        const closestId = items[closestIndex]?.id;
+      const shouldSwitch = candidateIndex >= 0 && candidateHeadDistance < effectiveViewportHeight * threshold && (currentOpenIndex === -1 || candidateHeadDistance + hysteresis < currentCenterDistance);
+      if (shouldSwitch) {
+        const closestId = items[candidateIndex]?.id;
         if (manuallyClosedId !== null && closestId !== manuallyClosedId) {
           setManuallyClosedId(null);
         }
@@ -153,7 +165,7 @@ function Accordion({
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, [isScrollDetectionActive, manuallySelected, manuallyClosedId, items, openIds, threshold, headerOffset, onValueChange]);
+  }, [isScrollDetectionActive, manuallySelected, manuallyClosedId, items, openIds, threshold, headerOffset, hysteresis, onValueChange]);
   useEffect(() => {
     return () => {
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);

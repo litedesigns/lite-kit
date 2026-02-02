@@ -24,6 +24,8 @@ export interface ScrollConfig {
   mobileOnly?: boolean;
   /** Fixed header height in pixels to offset scroll calculations. Default: 0 */
   headerOffset?: number;
+  /** Hysteresis margin in pixels - prevents flickering by requiring new item to be significantly closer. Default: 50 */
+  hysteresis?: number;
 }
 
 export interface AccordionProps {

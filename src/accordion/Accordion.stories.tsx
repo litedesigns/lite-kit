@@ -299,6 +299,7 @@ export const ScrollDetection: Story = {
       scrollToCenter: true,
       mobileOnly: false,
       headerOffset: 0,
+      hysteresis: 50,
     },
   },
   parameters: {
@@ -311,7 +312,7 @@ export const ScrollDetection: Story = {
   },
   decorators: [
     (Story) => (
-      <div style={{ height: '100vh', overflow: 'auto', padding: '50vh 2rem' }}>
+      <div style={{ minHeight: '200vh', padding: '50vh 2rem' }}>
         <Story />
       </div>
     ),
