@@ -371,4 +371,42 @@ describe('Accordion', () => {
       expect(openChevrons.length).toBeGreaterThan(0);
     });
   });
+
+  describe('CSS Variable Support', () => {
+    it('applies all BEM classes for styling customisation', () => {
+      const { container } = render(<Accordion items={mockItems} />);
+
+      expect(container.querySelector('.lite-kit-accordion-item')).toBeInTheDocument();
+      expect(container.querySelector('.lite-kit-accordion-title')).toBeInTheDocument();
+      expect(container.querySelector('.lite-kit-accordion-chevron')).toBeInTheDocument();
+      expect(container.querySelector('.lite-kit-accordion-content')).toBeInTheDocument();
+      expect(container.querySelector('.lite-kit-accordion-content-inner')).toBeInTheDocument();
+    });
+
+    it('applies modifier classes for open state', async () => {
+      const user = userEvent.setup();
+      const { container } = render(<Accordion items={mockItems} />);
+
+      const accordion = container.querySelector('.lite-kit-accordion')!;
+      const button = within(accordion).getByRole('button', { name: /Item 1/i });
+
+      // Initially closed
+      const item = accordion.querySelector('[class*="lite-kit-accordion-item"]');
+      expect(item).not.toHaveClass('lite-kit-accordion-item--open');
+
+      // Open the item
+      await user.click(button);
+
+      // Should have open modifier
+      expect(item).toHaveClass('lite-kit-accordion-item--open');
+    });
+
+    it('applies all text-related BEM classes', () => {
+      const { container } = render(<Accordion items={mockItems} />);
+
+      expect(container.querySelector('.lite-kit-accordion-text')).toBeInTheDocument();
+      expect(container.querySelector('.lite-kit-accordion-title')).toBeInTheDocument();
+      expect(container.querySelector('.lite-kit-accordion-subtitle')).toBeInTheDocument();
+    });
+  });
 });

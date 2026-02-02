@@ -73,18 +73,54 @@ const features = [
 | `itemClassName` | `string` | - | Individual item class names |
 | `onValueChange` | `(openIds: string[]) => void` | - | Callback when open items change |
 
-### Theming
+## Styling & Theming
 
-The component uses CSS variables for theming. Override in your CSS:
+lite-kit components use CSS variables for all themeable properties, following a three-tier token system (primitive → semantic → component). This allows complete visual customisation without fighting the library.
+
+### Basic Usage
+
+Import component styles:
+
+```tsx
+import { Accordion } from '@litedesigns/lite-kit';
+import '@litedesigns/lite-kit/styles';
+```
+
+### Customisation via CSS Variables
+
+Override any visual property:
 
 ```css
-.lite-kit-accordion {
-  --accordion-bg: your-color;
-  --accordion-border: your-color;
-  --accordion-text: your-color;
-  --accordion-text-muted: your-color;
+.my-accordion {
+  --lk-accordion-item-bg: white;
+  --lk-accordion-item-border: rgb(229, 231, 235);
+  --lk-accordion-title-color: rgb(17, 24, 39);
 }
 ```
+
+### Customisation via Wrapper Classes
+
+Target BEM classes directly:
+
+```css
+.my-accordion .lite-kit-accordion-item {
+  background: white;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+```
+
+### Dark Mode
+
+Add `.dark` class to container or rely on system preference:
+
+```tsx
+<div className="dark">
+  <Accordion items={items} />
+</div>
+```
+
+See [Design Philosophy](./docs/DESIGN_PHILOSOPHY.md) for comprehensive styling guidelines.
 
 ## Development
 

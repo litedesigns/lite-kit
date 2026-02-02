@@ -318,6 +318,83 @@ export const ScrollDetection: Story = {
   ],
 };
 
+export const CSSVariableTheming: Story = {
+  name: 'CSS Variable Theming',
+  args: {
+    items: itemsWithIcons,
+    mode: 'single',
+    collapsible: true,
+  },
+  decorators: [
+    (Story) => (
+      <div
+        style={{
+          '--lk-accordion-item-bg': 'rgb(255, 255, 255)',
+          '--lk-accordion-item-border': 'rgb(229, 231, 235)',
+          '--lk-accordion-item-border-hover': 'rgb(209, 213, 219)',
+          '--lk-accordion-item-shadow-hover': '0 4px 6px rgba(0, 0, 0, 0.1)',
+          '--lk-accordion-title-color': 'rgb(17, 24, 39)',
+          '--lk-accordion-icon-bg': 'rgb(243, 244, 246)',
+          '--lk-accordion-icon-bg-active': 'rgb(229, 231, 235)',
+        } as React.CSSProperties}
+      >
+        <Story />
+      </div>
+    ),
+  ],
+  parameters: {
+    docs: {
+      description: {
+        story: `
+Demonstrates theming via CSS variables. All colours, spacing, and visual properties can be customised.
+
+\`\`\`css
+.my-accordion {
+  --lk-accordion-item-bg: white;
+  --lk-accordion-item-border: grey;
+  --lk-accordion-title-color: black;
+  --lk-accordion-icon-bg: lightgrey;
+}
+\`\`\`
+        `,
+      },
+    },
+  },
+};
+
+export const DarkMode: Story = {
+  name: 'Dark Mode',
+  args: {
+    items: itemsWithIcons,
+    mode: 'single',
+    collapsible: true,
+  },
+  decorators: [
+    (Story) => (
+      <div className="dark" style={{ background: 'rgb(17, 24, 39)', padding: '2rem', borderRadius: '0.5rem' }}>
+        <Story />
+      </div>
+    ),
+  ],
+  parameters: {
+    docs: {
+      description: {
+        story: `
+Add \`.dark\` class to container to enable dark mode tokens.
+
+\`\`\`tsx
+<div className="dark">
+  <Accordion items={items} />
+</div>
+\`\`\`
+
+Or rely on system preference (automatic via \`prefers-color-scheme\`).
+        `,
+      },
+    },
+  },
+};
+
 export const InteractionTest: Story = {
   args: {
     items: basicItems,

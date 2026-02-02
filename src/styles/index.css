@@ -1,0 +1,10 @@
+/**
+ * Lite Kit Styles
+ *
+ * Import this file to include all lite-kit component styles:
+ *
+ * import '@litedesigns/lite-kit/styles';
+ */
+
+@import './tokens.css';
+@import './accordion.css';

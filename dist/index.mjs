@@ -182,7 +182,7 @@ function Accordion({
               onClick: () => handleToggle(item, index),
               className: cn(
                 "lite-kit-accordion-header",
-                "w-full flex items-center gap-4 p-4 text-left cursor-pointer",
+                "w-full flex items-center p-4 text-left cursor-pointer",
                 "transition-colors duration-200 active:scale-[0.99]"
               ),
               "aria-expanded": isOpen,
@@ -201,12 +201,12 @@ function Accordion({
                   }
                 ),
                 /* @__PURE__ */ jsxs("div", { className: "lite-kit-accordion-text flex-1 min-w-0", children: [
-                  /* @__PURE__ */ jsx("h3", { className: "lite-kit-accordion-title font-semibold text-sm", children: item.title }),
+                  /* @__PURE__ */ jsx("h3", { className: "lite-kit-accordion-title", children: item.title }),
                   item.subtitle && /* @__PURE__ */ jsx(
                     "p",
                     {
                       className: cn(
-                        "lite-kit-accordion-subtitle text-xs mt-0.5 transition-colors duration-300",
+                        "lite-kit-accordion-subtitle mt-0.5 transition-colors duration-300",
                         isOpen && "lite-kit-accordion-subtitle--active"
                       ),
                       children: item.subtitle
@@ -232,7 +232,7 @@ function Accordion({
                 "div",
                 {
                   className: cn(
-                    "lite-kit-accordion-content-inner text-sm leading-relaxed",
+                    "lite-kit-accordion-content-inner leading-relaxed",
                     Icon ? "px-4 pb-4 pl-20" : "px-4 pb-4"
                   ),
                   children: typeof item.content === "string" ? /* @__PURE__ */ jsx("p", { children: item.content }) : item.content
