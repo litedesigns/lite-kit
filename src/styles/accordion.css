@@ -1,61 +1,161 @@
 /**
- * Lite Kit Accordion - Styling Guide
+ * Lite Kit Accordion Component Styles
  *
- * The Accordion component uses Tailwind classes for structural/functional styling
- * (layout, collapse animation, transitions) and semantic class names for visual
- * styling that projects can target.
+ * Uses CSS variables for all themeable properties.
+ * Structure/layout handled by Tailwind classes in JSX.
  *
- * Semantic class names available for visual customisation:
- *
- * Container:
- * - .lite-kit-accordion                    Main container
- *
- * Items:
- * - .lite-kit-accordion-item               Individual item wrapper
- * - .lite-kit-accordion-item--open         Item when expanded
- *
- * Header:
- * - .lite-kit-accordion-header             Clickable header button
- *
- * Icon (when provided):
- * - .lite-kit-accordion-icon               Icon container
- * - .lite-kit-accordion-icon--active       Icon container when expanded
- * - .lite-kit-accordion-icon-svg           The icon SVG element
- *
- * Text:
- * - .lite-kit-accordion-text               Title/subtitle container
- * - .lite-kit-accordion-title              Title text
- * - .lite-kit-accordion-subtitle           Subtitle text (if provided)
- * - .lite-kit-accordion-subtitle--active   Subtitle when expanded
- *
- * Chevron:
- * - .lite-kit-accordion-chevron            Chevron icon
- * - .lite-kit-accordion-chevron--open      Chevron when expanded (rotated)
- *
- * Content:
- * - .lite-kit-accordion-content            Content wrapper
- * - .lite-kit-accordion-content--open      Content when visible
- * - .lite-kit-accordion-content--closed    Content when hidden
- * - .lite-kit-accordion-content-inner      Inner content with padding
- *
- * Example usage in your project's CSS:
+ * Customisation examples at bottom of file.
+ */
+
+/* ========================================
+   Component Tokens
+   ======================================== */
+
+:root {
+  /* Item */
+  --lk-accordion-item-bg: transparent;
+  --lk-accordion-item-border: var(--lk-color-border-base);
+  --lk-accordion-item-border-hover: var(--lk-color-border-hover);
+  --lk-accordion-item-radius: var(--lk-radius-md);
+  --lk-accordion-item-padding: var(--lk-space-4);
+  --lk-accordion-item-gap: var(--lk-space-4);
+  --lk-accordion-item-shadow: none;
+  --lk-accordion-item-shadow-hover: var(--lk-shadow-sm);
+
+  /* Icon */
+  --lk-accordion-icon-size: 3rem;          /* 48px */
+  --lk-accordion-icon-bg: var(--lk-color-bg-subtle);
+  --lk-accordion-icon-bg-active: var(--lk-color-bg-muted);
+  --lk-accordion-icon-color: var(--lk-color-text-secondary);
+  --lk-accordion-icon-color-active: var(--lk-color-text-primary);
+  --lk-accordion-icon-radius: var(--lk-radius-lg);
+
+  /* Text */
+  --lk-accordion-title-color: var(--lk-color-text-primary);
+  --lk-accordion-title-weight: 600;
+  --lk-accordion-title-size: 0.875rem;       /* 14px */
+  --lk-accordion-subtitle-color: var(--lk-color-text-secondary);
+  --lk-accordion-subtitle-color-active: var(--lk-color-text-primary);
+  --lk-accordion-subtitle-size: 0.75rem;     /* 12px */
+  --lk-accordion-content-color: var(--lk-color-text-primary);
+  --lk-accordion-content-size: 0.875rem;     /* 14px */
+
+  /* Chevron */
+  --lk-accordion-chevron-color: var(--lk-color-text-secondary);
+  --lk-accordion-chevron-size: 1.25rem;    /* 20px */
+
+  /* Transitions */
+  --lk-accordion-transition-duration: var(--lk-transition-base);
+}
+
+/* ========================================
+   Component Styles
+   ======================================== */
+
+/* Item */
+.lite-kit-accordion-item {
+  background: var(--lk-accordion-item-bg);
+  border: 1px solid var(--lk-accordion-item-border);
+  border-radius: var(--lk-accordion-item-radius);
+  box-shadow: var(--lk-accordion-item-shadow);
+  transition: box-shadow var(--lk-accordion-transition-duration) ease-out,
+              border-color var(--lk-accordion-transition-duration) ease-out;
+}
+
+.lite-kit-accordion-item:hover {
+  border-color: var(--lk-accordion-item-border-hover);
+  box-shadow: var(--lk-accordion-item-shadow-hover);
+}
+
+/* Icon container */
+.lite-kit-accordion-icon {
+  width: var(--lk-accordion-icon-size);
+  height: var(--lk-accordion-icon-size);
+  background-color: var(--lk-accordion-icon-bg);
+  border-radius: var(--lk-accordion-icon-radius);
+  transition: background-color var(--lk-accordion-transition-duration) ease-out;
+}
+
+.lite-kit-accordion-icon--active {
+  background-color: var(--lk-accordion-icon-bg-active);
+}
+
+/* Icon SVG */
+.lite-kit-accordion-icon-svg {
+  color: var(--lk-accordion-icon-color);
+  transition: color var(--lk-accordion-transition-duration) ease-out;
+}
+
+.lite-kit-accordion-icon--active .lite-kit-accordion-icon-svg {
+  color: var(--lk-accordion-icon-color-active);
+}
+
+/* Header */
+.lite-kit-accordion-header {
+  gap: var(--lk-accordion-item-gap);
+}
+
+/* Title */
+.lite-kit-accordion-title {
+  color: var(--lk-accordion-title-color);
+  font-weight: var(--lk-accordion-title-weight);
+  font-size: var(--lk-accordion-title-size);
+}
+
+/* Subtitle */
+.lite-kit-accordion-subtitle {
+  color: var(--lk-accordion-subtitle-color);
+  font-size: var(--lk-accordion-subtitle-size);
+  transition: color var(--lk-accordion-transition-duration) ease-out;
+}
+
+.lite-kit-accordion-subtitle--active {
+  color: var(--lk-accordion-subtitle-color-active);
+}
+
+/* Chevron */
+.lite-kit-accordion-chevron {
+  color: var(--lk-accordion-chevron-color);
+  width: var(--lk-accordion-chevron-size);
+  height: var(--lk-accordion-chevron-size);
+}
+
+/* Content */
+.lite-kit-accordion-content-inner {
+  color: var(--lk-accordion-content-color);
+  font-size: var(--lk-accordion-content-size);
+}
+
+/* ========================================
+   Customisation Examples
+   ======================================== */
+
+/**
+ * Override via wrapper class:
  *
  * .my-accordion .lite-kit-accordion-item {
- *   background-color: white;
+ *   background: white;
  *   border: 1px solid #e5e7eb;
- *   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+ *   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
  * }
  *
  * .my-accordion .lite-kit-accordion-title {
- *   font-weight: 600;
  *   color: #111827;
+ *   font-weight: 600;
  * }
  *
- * .my-accordion .lite-kit-accordion-chevron {
- *   color: #6b7280;
+ * Or via CSS variables:
+ *
+ * .my-accordion {
+ *   --lk-accordion-item-bg: white;
+ *   --lk-accordion-item-border: rgb(229, 231, 235);
+ *   --lk-accordion-title-color: rgb(17, 24, 39);
+ *   --lk-accordion-title-weight: 600;
  * }
  *
- * .my-accordion .lite-kit-accordion-content-inner {
- *   color: #4b5563;
- * }
+ * Dark mode (automatic with .dark class):
+ *
+ * <div className="dark">
+ *   <Accordion items={items} />
+ * </div>
  */

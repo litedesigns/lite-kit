@@ -1,0 +1,192 @@
+/**
+ * Lite Kit Design Tokens
+ *
+ * Three-tier token system:
+ * 1. Primitive tokens (foundation values)
+ * 2. Semantic tokens (meaning/purpose)
+ * 3. Component tokens (component-specific, in component CSS files)
+ */
+
+:root {
+  /* ========================================
+     Primitive Tokens - Colours (RGB format)
+     ======================================== */
+
+  --lk-white: 255, 255, 255;
+  --lk-black: 0, 0, 0;
+
+  /* Greyscale (light mode) */
+  --lk-gray-50: 249, 250, 251;
+  --lk-gray-100: 243, 244, 246;
+  --lk-gray-200: 229, 231, 235;
+  --lk-gray-300: 209, 213, 219;
+  --lk-gray-400: 156, 163, 175;
+  --lk-gray-500: 107, 114, 128;
+  --lk-gray-600: 75, 85, 99;
+  --lk-gray-700: 55, 65, 81;
+  --lk-gray-800: 31, 41, 55;
+  --lk-gray-900: 17, 24, 39;
+
+  /* ========================================
+     Primitive Tokens - Spacing (8px base)
+     ======================================== */
+
+  --lk-space-1: 0.25rem;   /* 4px */
+  --lk-space-2: 0.5rem;    /* 8px */
+  --lk-space-3: 0.75rem;   /* 12px */
+  --lk-space-4: 1rem;      /* 16px */
+  --lk-space-5: 1.25rem;   /* 20px */
+  --lk-space-6: 1.5rem;    /* 24px */
+  --lk-space-8: 2rem;      /* 32px */
+  --lk-space-10: 2.5rem;   /* 40px */
+  --lk-space-12: 3rem;     /* 48px */
+  --lk-space-16: 4rem;     /* 64px */
+
+  /* ========================================
+     Primitive Tokens - Border Radii
+     ======================================== */
+
+  --lk-radius-sm: 0.25rem;  /* 4px */
+  --lk-radius-md: 0.5rem;   /* 8px */
+  --lk-radius-lg: 0.75rem;  /* 12px */
+  --lk-radius-xl: 1rem;     /* 16px */
+  --lk-radius-full: 9999px;
+
+  /* ========================================
+     Primitive Tokens - Shadows
+     ======================================== */
+
+  --lk-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --lk-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --lk-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --lk-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  /* ========================================
+     Primitive Tokens - Transitions
+     ======================================== */
+
+  --lk-transition-fast: 150ms;
+  --lk-transition-base: 300ms;
+  --lk-transition-slow: 500ms;
+
+  /* ========================================
+     Primitive Tokens - Z-index Scale
+     ======================================== */
+
+  --lk-z-base: 0;
+  --lk-z-dropdown: 1000;
+  --lk-z-modal: 2000;
+  --lk-z-toast: 3000;
+
+  /* ========================================
+     Semantic Tokens - Text Colours
+     ======================================== */
+
+  --lk-color-text-primary: rgb(var(--lk-gray-900));
+  --lk-color-text-secondary: rgb(var(--lk-gray-500));
+  --lk-color-text-tertiary: rgb(var(--lk-gray-400));
+  --lk-color-text-disabled: rgb(var(--lk-gray-300));
+  --lk-color-text-inverse: rgb(var(--lk-white));
+
+  /* ========================================
+     Semantic Tokens - Border Colours
+     ======================================== */
+
+  --lk-color-border-base: rgb(var(--lk-gray-200));
+  --lk-color-border-hover: rgb(var(--lk-gray-300));
+  --lk-color-border-focus: rgb(var(--lk-gray-400));
+  --lk-color-border-disabled: rgb(var(--lk-gray-200));
+
+  /* ========================================
+     Semantic Tokens - Background Colours
+     ======================================== */
+
+  --lk-color-bg-base: rgb(var(--lk-white));
+  --lk-color-bg-subtle: rgb(var(--lk-gray-50));
+  --lk-color-bg-muted: rgb(var(--lk-gray-100));
+  --lk-color-bg-hover: rgb(var(--lk-gray-50));
+  --lk-color-bg-active: rgb(var(--lk-gray-100));
+  --lk-color-bg-disabled: rgb(var(--lk-gray-100));
+
+  /* ========================================
+     Semantic Tokens - State Colours
+     ======================================== */
+
+  --lk-color-success: rgb(34, 197, 94);
+  --lk-color-error: rgb(239, 68, 68);
+  --lk-color-warning: rgb(251, 191, 36);
+  --lk-color-info: rgb(59, 130, 246);
+}
+
+/* ========================================
+   Dark Mode Tokens
+   ======================================== */
+
+.dark,
+:root[data-theme="dark"] {
+  /* Flip greyscale for dark mode */
+  --lk-gray-50: 31, 41, 55;
+  --lk-gray-100: 55, 65, 81;
+  --lk-gray-200: 75, 85, 99;
+  --lk-gray-300: 107, 114, 128;
+  --lk-gray-400: 156, 163, 175;
+  --lk-gray-500: 209, 213, 219;
+  --lk-gray-600: 229, 231, 235;
+  --lk-gray-700: 243, 244, 246;
+  --lk-gray-800: 249, 250, 251;
+  --lk-gray-900: 255, 255, 255;
+
+  /*
+   * Note: Semantic text/border tokens below are technically redundant since they
+   * reference the flipped greyscale primitives above. They're explicitly defined
+   * for clarity and to ensure the token hierarchy is obvious to consumers.
+   */
+  --lk-color-text-primary: rgb(var(--lk-gray-900));
+  --lk-color-text-secondary: rgb(var(--lk-gray-500));
+  --lk-color-text-tertiary: rgb(var(--lk-gray-400));
+
+  --lk-color-border-base: rgb(var(--lk-gray-700));
+  --lk-color-border-hover: rgb(var(--lk-gray-600));
+
+  /* Background tokens use original dark values to avoid circular references */
+  --lk-color-bg-base: rgb(17, 24, 39);
+  --lk-color-bg-subtle: rgb(31, 41, 55);
+  --lk-color-bg-muted: rgb(55, 65, 81);
+}
+
+/* ========================================
+   System Dark Mode (prefers-color-scheme)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Flip greyscale for dark mode */
+    --lk-gray-50: 31, 41, 55;
+    --lk-gray-100: 55, 65, 81;
+    --lk-gray-200: 75, 85, 99;
+    --lk-gray-300: 107, 114, 128;
+    --lk-gray-400: 156, 163, 175;
+    --lk-gray-500: 209, 213, 219;
+    --lk-gray-600: 229, 231, 235;
+    --lk-gray-700: 243, 244, 246;
+    --lk-gray-800: 249, 250, 251;
+    --lk-gray-900: 255, 255, 255;
+
+    /*
+     * Note: Semantic text/border tokens below are technically redundant since they
+     * reference the flipped greyscale primitives above. They're explicitly defined
+     * for clarity and to ensure the token hierarchy is obvious to consumers.
+     */
+    --lk-color-text-primary: rgb(var(--lk-gray-900));
+    --lk-color-text-secondary: rgb(var(--lk-gray-500));
+    --lk-color-text-tertiary: rgb(var(--lk-gray-400));
+
+    --lk-color-border-base: rgb(var(--lk-gray-700));
+    --lk-color-border-hover: rgb(var(--lk-gray-600));
+
+    /* Background tokens use original dark values to avoid circular references */
+    --lk-color-bg-base: rgb(17, 24, 39);
+    --lk-color-bg-subtle: rgb(31, 41, 55);
+    --lk-color-bg-muted: rgb(55, 65, 81);
+  }
+}
