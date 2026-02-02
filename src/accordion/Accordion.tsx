@@ -182,10 +182,28 @@ export function Accordion({
         }
       });
 
-      // Only switch if candidate head is significantly closer than current center (hysteresis)
-      const shouldSwitch = candidateIndex >= 0 &&
-        candidateHeadDistance < effectiveViewportHeight * threshold &&
-        (currentOpenIndex === -1 || candidateHeadDistance + hysteresis < currentCenterDistance);
+      // Direction-aware switching logic
+      let shouldSwitch = false;
+
+      if (candidateIndex >= 0 && candidateHeadDistance < effectiveViewportHeight * threshold) {
+        const isScrollingUp = candidateIndex < currentOpenIndex;
+
+        if (currentOpenIndex === -1) {
+          // No current item open, just switch to closest
+          shouldSwitch = true;
+        } else if (isScrollingUp) {
+          // Scrolling up: switch when current item's top is below viewport centre
+          // (meaning its content is scrolling out of view downward)
+          const currentRef = itemRefs.current[currentOpenIndex];
+          if (currentRef) {
+            const currentTop = currentRef.getBoundingClientRect().top;
+            shouldSwitch = currentTop > viewportCenter;
+          }
+        } else {
+          // Scrolling down: use hysteresis (existing behaviour)
+          shouldSwitch = candidateHeadDistance + hysteresis < currentCenterDistance;
+        }
+      }
 
       if (shouldSwitch) {
         const closestId = items[candidateIndex]?.id;

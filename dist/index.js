@@ -172,7 +172,21 @@ function Accordion({
           candidateIndex = index;
         }
       });
-      const shouldSwitch = candidateIndex >= 0 && candidateHeadDistance < effectiveViewportHeight * threshold && (currentOpenIndex === -1 || candidateHeadDistance + hysteresis < currentCenterDistance);
+      let shouldSwitch = false;
+      if (candidateIndex >= 0 && candidateHeadDistance < effectiveViewportHeight * threshold) {
+        const isScrollingUp = candidateIndex < currentOpenIndex;
+        if (currentOpenIndex === -1) {
+          shouldSwitch = true;
+        } else if (isScrollingUp) {
+          const currentRef = itemRefs.current[currentOpenIndex];
+          if (currentRef) {
+            const currentTop = currentRef.getBoundingClientRect().top;
+            shouldSwitch = currentTop > viewportCenter;
+          }
+        } else {
+          shouldSwitch = candidateHeadDistance + hysteresis < currentCenterDistance;
+        }
+      }
       if (shouldSwitch) {
         const closestId = items[candidateIndex]?.id;
         if (manuallyClosedId !== null && closestId !== manuallyClosedId) {
